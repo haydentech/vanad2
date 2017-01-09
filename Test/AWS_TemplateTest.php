@@ -1,29 +1,16 @@
-# vanad2
-AWS Template Creator
+<?php
 
-Assignment 2:
+   
+use PHPUnit\Framework\TestCase;
+require_once dirname(__FILE__) . '/../AWS_Template.php';
 
-Preferred tools:
-  - Composer: for dependency management
-  - PHPUnit: For testing your code
-  - PHP Code Sniffer: Code analyzer
- 
-Deliverable:
-- Provide us with a public GitHub repository containing the assignment.
-
-# Should give output 1 (See desired outputs below)
-php assignment2.php
-
-# Should give output 2 (See desired outputs below)
-php assignment2.php --instances 2 --instance-type t2.small --allow-ssh-from 172.16.8.30
-
-In addition, both commands for assignment #2 should render a HTML page with clear syntax highlighting. You can earn bonus points by creating a mechanism to apply the template using the aws cli and for monitoring and reporting the status of the template's deployment.
-
-Outputs:
-
-Output #1
-
+class AWS_TemplateTest extends \PHPUnit_Framework_TestCase
 {
+        // A test for default output with no parameters
+        public function testOutput1()
+        {
+	    $aws_template_class = new AWS_Template_Generator();
+            $expected = '{
   "AWSTemplateFormatVersion": "2010-09-09",
   "Outputs": {
     "PublicIP": {
@@ -64,12 +51,21 @@ Output #1
       "Type": "AWS::EC2::SecurityGroup"
     }
   }
-}
+}';
 
+            $actual = $aws_template_class->textOutput();
+            $this->assertEquals($expected, $actual);
+        }
 
-Output #2
-
-{
+        // A test for output with the following parameters:
+	// --instances 2 --instance-type t2.small --allow-ssh-from 172.16.8.30
+        public function testOutput2()
+        {
+	    $aws_template_class = new AWS_Template_Generator();
+	    $aws_template_class->setInstanceCount(2);
+	    $aws_template_class->setInstanceType('t2.small');
+	    $aws_template_class->setSSHAllowedRange('172.16.8.30');
+            $expected = '{
   "AWSTemplateFormatVersion": "2010-09-09",
   "Outputs": {
     "PublicIP": {
@@ -122,5 +118,12 @@ Output #2
       "Type": "AWS::EC2::SecurityGroup"
     }
   }
-}
+}';
 
+            $actual = $aws_template_class->textOutput();
+            $this->assertEquals($expected, $actual);
+        }
+
+    }
+
+?>
